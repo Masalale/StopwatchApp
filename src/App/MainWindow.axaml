@@ -1,0 +1,23 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Stopwatch.App.MainWindow"
+        Width="480" Height="240"
+        Title="Stopwatch">
+
+    <StackPanel Margin="20" Spacing="20"
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+
+        <TextBlock x:Name="TimeDisplay" Text="00:00:00"
+                   FontSize="56" FontWeight="Bold"
+                   HorizontalAlignment="Center"/>
+
+        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+            <Button Content="Start"  Click="OnStart"  Background="#2E7D32" Foreground="White"/>
+            <Button Content="Pause"  Click="OnPause"  Background="#F9A825" Foreground="White"/>
+            <Button Content="Resume" Click="OnResume" Background="#1565C0" Foreground="White"/>
+            <Button Content="Reset"  Click="OnReset"  Background="#616161" Foreground="White"/>
+            <Button Content="Stop"   Click="OnStop"   Background="#C62828" Foreground="White"/>
+        </StackPanel>
+
+    </StackPanel>
+</Window>
