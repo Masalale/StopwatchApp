@@ -8,7 +8,7 @@ A desktop stopwatch app built on C# with Avalonia UI.
 - **Live Display**: Elapsed time shown as `hh:mm:ss`, counting seconds → minutes → hours.
 - **Tested Logic**: Stopwatch logic built test-first with xUnit.
 
-![App screenshot](src/App/Assets/screenshot.png)
+![App screenshot](src/App/Assets/screenshot.png?v=2)
 
 ## Quick Start
 
