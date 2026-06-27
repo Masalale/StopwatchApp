@@ -35,6 +35,7 @@ public class StopwatchTimer
 
     /// <summary>
     /// Gets the elapsed time formatted as <c>hh:mm:ss</c>.
+    /// TotalHours is cast to int so hours can exceed 23 (e.g. 25:00:00).
     /// </summary>
     /// <value>A string in the format <c>00:00:00</c>, supporting hours past 24.</value>
     public string Formatted =>
@@ -43,6 +44,7 @@ public class StopwatchTimer
     /// <summary>Starts the stopwatch from 00:00:00.</summary>
     public void Start()
     {
+        // Always reset to zero so a fresh start clears any previous time
         Elapsed = TimeSpan.Zero;
         State   = TimerState.Running;
     }
@@ -54,7 +56,10 @@ public class StopwatchTimer
     public void Pause()
     {
         if (State == TimerState.Running)
+        {
             State = TimerState.Paused;
+        }
+        // else: already paused, stopped, or idle — nothing to do
     }
 
     /// <summary>
@@ -64,7 +69,10 @@ public class StopwatchTimer
     public void Resume()
     {
         if (State == TimerState.Paused)
+        {
             State = TimerState.Running;
+        }
+        // else: not paused — nothing to do
     }
 
     /// <summary>
@@ -73,7 +81,7 @@ public class StopwatchTimer
     public void Reset()
     {
         Elapsed = TimeSpan.Zero;
-        State   = TimerState.Idle;
+        State   = TimerState.Idle;  // also stops counting if the timer was running
     }
 
     /// <summary>
@@ -83,16 +91,23 @@ public class StopwatchTimer
     public void Stop()
     {
         if (State == TimerState.Running || State == TimerState.Paused)
+        {
             State = TimerState.Stopped;
+        }
+        // else: already idle or stopped — preserve the existing time unchanged
     }
 
     /// <summary>
     /// Advances the elapsed time by one second if the stopwatch is running.
     /// Called once per second by the UI dispatcher timer.
+    /// Seconds automatically roll over into minutes, and minutes into hours.
     /// </summary>
     public void Tick()
     {
         if (IsRunning)
+        {
+            // Add one second; TimeSpan handles the rollover from seconds → minutes → hours
             Elapsed += TimeSpan.FromSeconds(1);
+        }
     }
 }
