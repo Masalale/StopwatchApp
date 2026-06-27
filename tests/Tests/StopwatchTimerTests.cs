@@ -2,15 +2,20 @@ using Stopwatch.App;
 
 namespace Stopwatch.Tests;
 
+/// <summary>
+/// Unit tests for <see cref="StopwatchTimer"/>, covering every state transition
+/// and guard condition following the TDD red-green-refactor cycle.
+/// </summary>
 public class StopwatchTimerTests
 {
-    // Returns a fresh, already-running stopwatch.
     private static StopwatchTimer Running()
     {
         var sw = new StopwatchTimer();
         sw.Start();
         return sw;
     }
+
+    // ── Initial state ──────────────────────────────────────────────────────────
 
     [Fact]
     public void New_StartsAtZeroAndNotRunning()
@@ -22,6 +27,15 @@ public class StopwatchTimerTests
     }
 
     [Fact]
+    public void New_StateIsIdle()
+    {
+        var sw = new StopwatchTimer();
+        Assert.Equal(TimerState.Idle, sw.State);
+    }
+
+    // ── Start ──────────────────────────────────────────────────────────────────
+
+    [Fact]
     public void Start_ZeroesAndRuns()
     {
         var sw = new StopwatchTimer();
@@ -31,6 +45,16 @@ public class StopwatchTimerTests
         Assert.True(sw.IsRunning);
         Assert.Equal(TimeSpan.Zero, sw.Elapsed);
     }
+
+    [Fact]
+    public void Start_TransitionsToRunning()
+    {
+        var sw = new StopwatchTimer();
+        sw.Start();
+        Assert.Equal(TimerState.Running, sw.State);
+    }
+
+    // ── Tick ───────────────────────────────────────────────────────────────────
 
     [Fact]
     public void Tick_IncrementsWhileRunning()
@@ -49,6 +73,8 @@ public class StopwatchTimerTests
         Assert.Equal(TimeSpan.Zero, sw.Elapsed);
     }
 
+    // ── Pause ──────────────────────────────────────────────────────────────────
+
     [Fact]
     public void Pause_StopsIncrementingButKeepsTime()
     {
@@ -60,6 +86,37 @@ public class StopwatchTimerTests
         Assert.False(sw.IsRunning);
         Assert.Equal(TimeSpan.FromSeconds(2), sw.Elapsed);
     }
+
+    [Fact]
+    public void Pause_TransitionsToPaused()
+    {
+        var sw = Running();
+        sw.Pause();
+        Assert.Equal(TimerState.Paused, sw.State);
+    }
+
+    [Fact]
+    public void Pause_WhenNotRunning_IsNoOp()
+    {
+        var sw = new StopwatchTimer();
+        sw.Pause();
+        Assert.Equal(TimerState.Idle, sw.State);
+        Assert.Equal(TimeSpan.Zero, sw.Elapsed);
+    }
+
+    [Fact]
+    public void Pause_WhenAlreadyPaused_IsNoOp()
+    {
+        var sw = Running();
+        sw.Tick();
+        sw.Pause();
+        var atPause = sw.Elapsed;
+        sw.Pause();
+        Assert.False(sw.IsRunning);
+        Assert.Equal(atPause, sw.Elapsed);
+    }
+
+    // ── Resume ─────────────────────────────────────────────────────────────────
 
     [Fact]
     public void Resume_ContinuesFromPausedTime()
@@ -74,6 +131,25 @@ public class StopwatchTimerTests
     }
 
     [Fact]
+    public void Resume_TransitionsToRunning()
+    {
+        var sw = Running();
+        sw.Pause();
+        sw.Resume();
+        Assert.Equal(TimerState.Running, sw.State);
+    }
+
+    [Fact]
+    public void Resume_WhenNotPaused_IsNoOp()
+    {
+        var sw = new StopwatchTimer();
+        sw.Resume();
+        Assert.Equal(TimerState.Idle, sw.State);
+    }
+
+    // ── Reset ──────────────────────────────────────────────────────────────────
+
+    [Fact]
     public void Reset_SetsBackToZero()
     {
         var sw = Running();
@@ -83,6 +159,27 @@ public class StopwatchTimerTests
         Assert.Equal(TimeSpan.Zero, sw.Elapsed);
         Assert.Equal("00:00:00", sw.Formatted);
     }
+
+    [Fact]
+    public void Reset_AlsoStopsRunning()
+    {
+        var sw = Running();
+        sw.Tick();
+        sw.Reset();
+        Assert.False(sw.IsRunning);
+        Assert.Equal(TimeSpan.Zero, sw.Elapsed);
+    }
+
+    [Fact]
+    public void Reset_ReturnsToIdle()
+    {
+        var sw = Running();
+        sw.Tick();
+        sw.Reset();
+        Assert.Equal(TimerState.Idle, sw.State);
+    }
+
+    // ── Stop ───────────────────────────────────────────────────────────────────
 
     [Fact]
     public void Stop_KeepsLastTimeAndStopsRunning()
@@ -97,12 +194,53 @@ public class StopwatchTimerTests
         Assert.Equal(TimeSpan.FromSeconds(3), sw.Elapsed);
     }
 
+    [Fact]
+    public void Stop_TransitionsToStopped()
+    {
+        var sw = Running();
+        sw.Stop();
+        Assert.Equal(TimerState.Stopped, sw.State);
+    }
+
+    [Fact]
+    public void Stop_WhenIdle_IsNoOp()
+    {
+        var sw = new StopwatchTimer();
+        sw.Stop();
+        Assert.Equal(TimerState.Idle, sw.State);
+    }
+
+    [Fact]
+    public void Stop_WhenAlreadyStopped_PreservesTime()
+    {
+        var sw = Running();
+        sw.Tick();
+        sw.Tick();
+        sw.Stop();
+        var atStop = sw.Elapsed;
+        sw.Stop();
+        Assert.Equal(atStop, sw.Elapsed);
+        Assert.Equal(TimerState.Stopped, sw.State);
+    }
+
+    [Fact]
+    public void Stop_FromPaused_TransitionsToStopped()
+    {
+        var sw = Running();
+        sw.Tick();
+        sw.Pause();
+        sw.Stop();
+        Assert.Equal(TimerState.Stopped, sw.State);
+    }
+
+    // ── Formatted ──────────────────────────────────────────────────────────────
+
     [Theory]
-    [InlineData(0, "00:00:00")]
-    [InlineData(5, "00:00:05")]
-    [InlineData(65, "00:01:05")]
-    [InlineData(3661, "01:01:01")]   // seconds -> minutes -> hours
-    [InlineData(90000, "25:00:00")]  // total hours past 24h
+    [InlineData(0,     "00:00:00")]
+    [InlineData(5,     "00:00:05")]
+    [InlineData(65,    "00:01:05")]
+    [InlineData(3661,  "01:01:01")]
+    [InlineData(90000, "25:00:00")]
     public void Formatted_RollsSecondsToMinutesToHours(int seconds, string expected)
     {
         var sw = new StopwatchTimer();
