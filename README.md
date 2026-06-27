@@ -1,4 +1,6 @@
 # Stopwatch Application
+# group tracker; 
+https://docs.google.com/spreadsheets/d/1ow2_kSaK9p1-H80DtlsnS5SXqDOor487LlQi48xFuQk/edit?usp=sharing
 
 A desktop stopwatch app built on C# with Avalonia UI.
 
