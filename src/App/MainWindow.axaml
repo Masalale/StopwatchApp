@@ -1,8 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="Stopwatch.App.MainWindow"
-        Width="540" Height="320"
-        MinWidth="540" MinHeight="320"
+        Width="600" Height="380"
+        MinWidth="600" MinHeight="380"
         CanResize="False"
         Title="Stopwatch"
         Background="#0D0D0D">
@@ -11,14 +11,14 @@
         <Style Selector="Button">
             <Setter Property="Background"       Value="#000000"/>
             <Setter Property="Foreground"       Value="#FFFFFF"/>
-            <Setter Property="BorderBrush"      Value="#404040"/>
+            <Setter Property="BorderBrush"      Value="#707070"/>
             <Setter Property="BorderThickness"  Value="1"/>
             <Setter Property="CornerRadius"     Value="0"/>
             <Setter Property="FontFamily"       Value="Courier New"/>
-            <Setter Property="FontSize"         Value="11"/>
+            <Setter Property="FontSize"         Value="14"/>
             <Setter Property="FontWeight"       Value="Bold"/>
-            <Setter Property="Padding"          Value="14,8"/>
-            <Setter Property="MinWidth"         Value="78"/>
+            <Setter Property="Padding"          Value="20,12"/>
+            <Setter Property="MinWidth"         Value="95"/>
         </Style>
         <Style Selector="Button:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="#1C1C1C"/>
@@ -34,53 +34,53 @@
         <TextBlock DockPanel.Dock="Top"
                    Text="S T O P W A T C H"
                    FontFamily="Courier New"
-                   FontSize="10"
+                   FontSize="13"
                    FontWeight="Bold"
-                   Foreground="#383838"
+                   Foreground="#A0A0A0"
                    HorizontalAlignment="Center"
-                   Margin="0,18,0,10"/>
+                   Margin="0,20,0,12"/>
 
-        <Rectangle DockPanel.Dock="Top" Height="1" Fill="#252525"/>
+        <Rectangle DockPanel.Dock="Top" Height="1" Fill="#333333"/>
 
         <!-- Timer display -->
         <TextBlock x:Name="TimeDisplay"
                    DockPanel.Dock="Top"
                    Text="00:00:00"
                    FontFamily="Courier New"
-                   FontSize="54"
+                   FontSize="64"
                    FontWeight="Bold"
                    Foreground="White"
                    HorizontalAlignment="Center"
-                   Margin="0,18,0,4"/>
+                   Margin="0,20,0,6"/>
 
         <!-- State indicator -->
         <TextBlock x:Name="StateDisplay"
                    DockPanel.Dock="Top"
                    Text="[ IDLE ]"
                    FontFamily="Courier New"
-                   FontSize="10"
-                   Foreground="#404040"
+                   FontSize="13"
+                   Foreground="#808080"
                    HorizontalAlignment="Center"
-                   Margin="0,0,0,10"/>
+                   Margin="0,0,0,12"/>
 
-        <Rectangle DockPanel.Dock="Top" Height="1" Fill="#252525"/>
+        <Rectangle DockPanel.Dock="Top" Height="1" Fill="#333333"/>
 
         <!-- Message -->
         <TextBlock x:Name="MessageDisplay"
                    DockPanel.Dock="Top"
                    Text=""
                    FontFamily="Courier New"
-                   FontSize="9"
-                   Foreground="#505050"
+                   FontSize="11"
+                   Foreground="#909090"
                    HorizontalAlignment="Center"
-                   Margin="0,8,0,0"/>
+                   Margin="0,10,0,0"/>
 
         <!-- Button row -->
         <StackPanel DockPanel.Dock="Bottom"
                     Orientation="Horizontal"
                     HorizontalAlignment="Center"
-                    Spacing="8"
-                    Margin="0,0,0,20">
+                    Spacing="10"
+                    Margin="0,0,0,24">
             <Button x:Name="BtnStart"  Content="START"  Click="OnStart"/>
             <Button x:Name="BtnPause"  Content="PAUSE"  Click="OnPause"/>
             <Button x:Name="BtnResume" Content="RESUME" Click="OnResume"/>
